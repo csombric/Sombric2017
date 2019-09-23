@@ -1,0 +1,43 @@
+function [xnew xnewstd]=bin_data_Variable(x,binwidth, binwidth2)
+% writen based on bin_data
+% function does running average. the size of verctor x has to be even
+% binwidth indicates the duration of each time bin
+%writen by GTO April 14th 2009
+
+if ~isempty(x)
+    if binwidth==1
+        xnew=x;
+        xnewstd=zeros(size(x,1),size(x,2));
+    else
+        bstart=[1:size(x,1)];
+        %bend=[bstart+binwidth-1];
+        
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bend=[];
+for ii=1:size(x,1)
+    if ii<= 5
+        bend(ii)=[bstart(ii)+binwidth-1];
+    else
+    bend(ii)=[bstart(ii)+binwidth2-1];
+    end
+    
+end
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+bend(find(bend>size(x,1)))=size(x,1);
+        for  l=1:length(bstart)
+            t1 = bstart(l);
+            t2 = bend(l);
+            if t2==t1;
+                xnew(l,:)=NaN*zeros(1,size(x,2));
+                xnewstd(l,:)=NaN*zeros(1,size(x,2));
+            else
+                xnew(l,:) = mean(x(t1:t2,:));
+                xnewstd(l,:) = std(x(t1:t2,:));
+            end
+        end
+    end
+else
+    xnew=[];
+    xnewstd=[];
+end
